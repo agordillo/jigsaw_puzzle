@@ -1,0 +1,68 @@
+html,
+body {
+  background-color: #2a2a52;
+}
+
+html,
+body,
+div#root,
+div.screen_wrapper {
+  min-height: 100%;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  overflow: hidden;
+}
+
+#global_wrapper {
+  background-color: #2a2a52;
+}
+
+.main-background {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.screen_wrapper {
+  position: absolute;
+  visibility: visible;
+  &.screen_hidden {
+    opacity: 0;
+    visibility: visible;
+    animation: 1s fadeOut;
+    animation-fill-mode: forwards;
+  }
+}
+
+.screen_wrapper {
+  transition: opacity 700ms ease-in;
+}
+
+@keyframes fadeIn {
+  99% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}
+@keyframes fadeOut {
+  99% {
+    visibility: visible;
+  }
+  100% {
+    visibility: hidden;
+  }
+}
+
+.containers {
+  width: 100%;
+  height: 100%;
+  width: min(100vw, 133.33333vh);
+  height: min(100vh, 75vw);
+  position: relative;
+}
