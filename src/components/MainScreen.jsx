@@ -27,10 +27,17 @@ export default function MainScreen({ config, sendInput, result }) {
       newPieces.push({
         id: i,
         correctPosition: i,
-        currentSide: 1, // 1 or 2
+        currentSide: Math.random() < 0.5 ? 1 : 2, // Randomize initial side
         isPlaced: false,
       });
     }
+
+    // Shuffle pieces
+    for (let i = newPieces.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newPieces[i], newPieces[j]] = [newPieces[j], newPieces[i]];
+    }
+
     setPieces(newPieces);
     setGridState(Array(totalPieces).fill(null));
   };
@@ -116,26 +123,27 @@ export default function MainScreen({ config, sendInput, result }) {
 
   return (
     <div id="MainScreen" className="screen_wrapper">
-      <div className="puzzle-container">
-        <div
-          className="pieces-pool"
-          onDragOver={handleDragOver}
-          onDrop={handleDropToContainer}
-        >
-          <h3>Piezas (Click para girar)</h3>
-          <div className="pieces-list">
-            {pieces.filter(p => !p.isPlaced).map((piece) => (
-              <div
-                key={piece.id}
-                className="puzzle-piece"
-                draggable
-                onDragStart={(e) => handleDragStart(e, piece.id)}
-                onClick={() => togglePieceSide(piece.id)}
-                style={getBackgroundStyle(piece)}
-              />
-            ))}
-          </div>
+      <div
+        className="pieces-pool"
+        onDragOver={handleDragOver}
+        onDrop={handleDropToContainer}
+      >
+        <h3>Piezas (Click para girar)</h3>
+        <div className="pieces-list">
+          {pieces.filter(p => !p.isPlaced).map((piece) => (
+            <div
+              key={piece.id}
+              className="puzzle-piece"
+              draggable
+              onDragStart={(e) => handleDragStart(e, piece.id)}
+              onClick={() => togglePieceSide(piece.id)}
+              style={getBackgroundStyle(piece)}
+            />
+          ))}
         </div>
+      </div>
+      <div className="puzzle-container">
+
 
         <div className="puzzle-board">
           <h3>Tablero</h3>
