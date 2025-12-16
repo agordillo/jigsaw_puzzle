@@ -1,17 +1,14 @@
 export let LOCALES = {
   en: {
-    "i.send": "Send",
-    "i.message": "Enter the solution",
-    "i.errorMessage": "The solution is incorrect",
-    "i.successMessage": "The solution is correct",
+    "i.pieces": "Pieces (Click for rotate)",
+    "i.board": "Board",
   },
   es: {
-    "i.send": "Enviar",
-    "i.message": "Introduce la solución",
-    "i.errorMessage": "La solución es incorrecta",
-    "i.successMessage": "La solución es correcta",
+    "i.pieces": "Piezas (Click para girar)",
+    "i.board": "Tablero",
   },
   sr: {
-    "i.send": "Send",
+    "i.pieces": "Pieces (Click for rotate)",
+    "i.board": "Board",
   },
 };

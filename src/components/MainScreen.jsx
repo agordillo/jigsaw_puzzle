@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./../assets/scss/MainScreen.scss";
+import { useContext } from "react";
+import { GlobalContext } from "./GlobalContext";
 
-export default function MainScreen({ config, sendInput, result }) {
+export default function MainScreen({ config, sendSolution }) {
+  const { I18n } = useContext(GlobalContext);
   const [pieces, setPieces] = useState([]);
   const [gridState, setGridState] = useState([]);
   const [rows, setRows] = useState(3);
@@ -15,10 +18,25 @@ export default function MainScreen({ config, sendInput, result }) {
       setCols(c);
       initializePuzzle(r, c);
     } else {
-      // Fallback if config is not yet loaded
       initializePuzzle(3, 3);
     }
   }, [config]);
+
+  useEffect(() => {
+    if (gridState.length > 0 && gridState.every((cell) => cell !== null)) {
+      const orderedPieces = gridState.map((pieceId) =>
+        pieces.find((p) => p.id === pieceId)
+      );
+
+      const firstSide = orderedPieces[0].currentSide;
+      const allSameSide = orderedPieces.every((p) => p.currentSide === firstSide);
+      const allCorrectPositions = orderedPieces.every((p, index) => p.correctPosition === index);
+
+      if (allSameSide && allCorrectPositions) {
+        sendSolution(firstSide);
+      }
+    }
+  }, [gridState, pieces]);
 
   const initializePuzzle = (r, c) => {
     const totalPieces = r * c;
@@ -27,12 +45,11 @@ export default function MainScreen({ config, sendInput, result }) {
       newPieces.push({
         id: i,
         correctPosition: i,
-        currentSide: Math.random() < 0.5 ? 1 : 2, // Randomize initial side
+        currentSide: Math.random() < 0.5 ? 1 : 2,
         isPlaced: false,
       });
     }
 
-    // Shuffle pieces
     for (let i = newPieces.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [newPieces[i], newPieces[j]] = [newPieces[j], newPieces[i]];
@@ -48,27 +65,37 @@ export default function MainScreen({ config, sendInput, result }) {
 
   const handleDrop = (e, index) => {
     e.preventDefault();
-    const pieceId = parseInt(e.dataTransfer.getData("pieceId"));
-    if (isNaN(pieceId)) return;
+    const incomingPieceId = parseInt(e.dataTransfer.getData("pieceId"));
+    if (isNaN(incomingPieceId)) return;
 
-    // Check if spot is occupied
-    if (gridState[index] !== null) return;
-
-    // Move piece to grid
+    const targetPieceId = gridState[index];
     const newGridState = [...gridState];
+    const oldIndex = gridState.indexOf(incomingPieceId);
 
-    // If piece was already on grid, remove it from old spot
-    const oldIndex = gridState.indexOf(pieceId);
     if (oldIndex !== -1) {
       newGridState[oldIndex] = null;
     }
 
-    newGridState[index] = pieceId;
+    newGridState[index] = incomingPieceId;
+
+    if (targetPieceId !== null) {
+      if (oldIndex !== -1) {
+        newGridState[oldIndex] = targetPieceId;
+      }
+    }
+
     setGridState(newGridState);
 
-    // Update piece status
     setPieces((prev) =>
-      prev.map((p) => (p.id === pieceId ? { ...p, isPlaced: true } : p))
+      prev.map((p) => {
+        if (p.id === incomingPieceId) {
+          return { ...p, isPlaced: true };
+        }
+        if (targetPieceId !== null && oldIndex === -1 && p.id === targetPieceId) {
+          return { ...p, isPlaced: false };
+        }
+        return p;
+      })
     );
   };
 
@@ -77,7 +104,6 @@ export default function MainScreen({ config, sendInput, result }) {
     const pieceId = parseInt(e.dataTransfer.getData("pieceId"));
     if (isNaN(pieceId)) return;
 
-    // Remove from grid if it was there
     const oldIndex = gridState.indexOf(pieceId);
     if (oldIndex !== -1) {
       const newGridState = [...gridState];
@@ -109,8 +135,6 @@ export default function MainScreen({ config, sendInput, result }) {
     const row = Math.floor(piece.correctPosition / cols);
     const col = piece.correctPosition % cols;
 
-    // Calculate percentage positions
-    // Avoid division by zero if rows/cols = 1 (though unlikely for a puzzle)
     const xPos = cols > 1 ? (col * 100) / (cols - 1) : 0;
     const yPos = rows > 1 ? (row * 100) / (rows - 1) : 0;
 
@@ -128,7 +152,7 @@ export default function MainScreen({ config, sendInput, result }) {
         onDragOver={handleDragOver}
         onDrop={handleDropToContainer}
       >
-        <h3>Piezas (Click para girar)</h3>
+        <h3>{I18n.getTrans("i.pieces")}</h3>
         <div className="pieces-list">
           {pieces.filter(p => !p.isPlaced).map((piece) => (
             <div
@@ -144,9 +168,8 @@ export default function MainScreen({ config, sendInput, result }) {
       </div>
       <div className="puzzle-container">
 
-
         <div className="puzzle-board">
-          <h3>Tablero</h3>
+          <h3>{I18n.getTrans("i.board")}</h3>
           <div className="grid" style={{
             gridTemplateColumns: `repeat(${cols}, 1fr)`,
             gridTemplateRows: `repeat(${rows}, 1fr)`

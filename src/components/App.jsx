@@ -155,22 +155,21 @@ export default function App() {
   return (
     <div
       id="global_wrapper"
-      className={`${
-        appSettings !== null && typeof appSettings.skin === "string" ? appSettings.skin.toLowerCase() : ""
-      }`}
+      className={`${appSettings !== null && typeof appSettings.skin === "string" ? appSettings.skin.toLowerCase() : ""
+        }`}
       {...(appSettings !== null &&
-      typeof appSettings.background === "string" &&
-      typeof appSettings.backgroundSize === "string"
+        typeof appSettings.background === "string" &&
+        typeof appSettings.backgroundSize === "string"
         ? {
-            style: {
-              background: appSettings.background,
-              backgroundSize: appSettings.backgroundSize,
-            },
-          }
+          style: {
+            background: appSettings.background,
+            backgroundSize: appSettings.backgroundSize,
+          },
+        }
         : {})}
     >
       <div className={`main-background ${result && result.success === true ? "solved" : ""}`}>
-        {!loading && <MainScreen config={appSettings} sendInput={checkResult} result={result} />}
+        {!loading && <MainScreen config={appSettings} sendSolution={checkResult} />}
       </div>
     </div>
   );
