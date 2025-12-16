@@ -4,6 +4,7 @@ import { useContext } from "react";
 import { GlobalContext } from "./GlobalContext";
 import PiecesPool from "./PiecesPool";
 import PuzzleBoard from "./PuzzleBoard";
+import useSound from "../hooks/useSound";
 
 export default function MainScreen({ config, sendSolution, result }) {
   const { I18n } = useContext(GlobalContext);
@@ -11,6 +12,7 @@ export default function MainScreen({ config, sendSolution, result }) {
   const [gridState, setGridState] = useState([]);
   const [rows, setRows] = useState(3);
   const [cols, setCols] = useState(3);
+  const winSound = useSound(config.winAudio);
 
   useEffect(() => {
     if (!config) return;
@@ -24,7 +26,7 @@ export default function MainScreen({ config, sendSolution, result }) {
 
   useEffect(() => {
     if (result && result.success === true) {
-
+      winSound.play();
     }
   }, [result]);
 
