@@ -13,15 +13,13 @@ export default function MainScreen({ config, sendSolution }) {
   const [cols, setCols] = useState(3);
 
   useEffect(() => {
-    if (config) {
-      const r = config.rows || 3;
-      const c = config.cols || 3;
-      setRows(r);
-      setCols(c);
-      initializePuzzle(r, c);
-    } else {
-      initializePuzzle(3, 3);
-    }
+    if (!config) return;
+    const r = config.rows || 3;
+    const c = config.cols || 3;
+    setRows(r);
+    setCols(c);
+    initializePuzzle(r, c);
+
   }, [config]);
 
   useEffect(() => {
