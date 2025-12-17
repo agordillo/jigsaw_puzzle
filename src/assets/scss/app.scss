@@ -16,6 +16,13 @@ div.screen_wrapper {
   overflow: hidden;
 }
 
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 #global_wrapper {
   background-color: #2a2a52;
 }
@@ -30,6 +37,7 @@ div.screen_wrapper {
 .screen_wrapper {
   position: absolute;
   visibility: visible;
+
   &.screen_hidden {
     opacity: 0;
     visibility: visible;
@@ -46,14 +54,17 @@ div.screen_wrapper {
   99% {
     visibility: hidden;
   }
+
   100% {
     visibility: visible;
   }
 }
+
 @keyframes fadeOut {
   99% {
     visibility: visible;
   }
+
   100% {
     visibility: hidden;
   }

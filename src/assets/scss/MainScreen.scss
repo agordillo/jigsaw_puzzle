@@ -10,13 +10,14 @@
 
   .puzzle-container {
     display: flex;
+    flex: 1;
     padding: 20px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 1rem;
     backdrop-filter: blur(10px);
 
-    width: 77%;
     height: 90vh;
+    min-width: 0;
     margin: 1vw;
 
     h3 {
@@ -27,14 +28,13 @@
   }
 
   .pieces-pool {
-    width: 15%;
+    width: 300px;
     background: rgba(0, 0, 0, 0.2);
     padding: 20px;
     border-radius: 0.5rem;
     overflow-y: auto;
     height: 90vh;
     margin: 1vw;
-    min-width: 300px;
 
     .pieces-list {
       display: flex;
@@ -53,10 +53,7 @@
 
     .grid {
       display: grid;
-      width: 100%;
-      height: 100%;
       background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(255, 255, 255, 0.2);
       gap: 1px;
     }
 
@@ -89,9 +86,11 @@
 
     &.locked {
       cursor: default;
+
       &:hover {
         transform: none;
       }
+
       &:active {
         cursor: default;
       }
