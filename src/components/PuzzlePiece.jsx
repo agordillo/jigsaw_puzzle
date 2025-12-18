@@ -1,6 +1,15 @@
 
-export default function PuzzlePiece({ piece, config, rows, cols, onDragStart, onPieceClick, isLocked, style, onMouseEnter }) {
+export default function PuzzlePiece({ piece, config, rows, cols, onDragStart, onPieceClick, isLocked, style, onMouseEnter, tileUrl }) {
     const getBackgroundStyle = (piece) => {
+        if (tileUrl) {
+            return {
+                backgroundImage: `url(${tileUrl})`,
+                backgroundPosition: "center",
+                backgroundSize: "100% 100%", // Fit the tile exactly
+                cursor: isLocked ? "default" : "grab",
+            };
+        }
+
         const imgUrl = piece.currentSide === 1 ? config.image1 : config.image2;
         const row = Math.floor(piece.correctPosition / cols);
         const col = piece.correctPosition % cols;

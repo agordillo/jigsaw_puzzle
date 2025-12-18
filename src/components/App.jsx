@@ -11,6 +11,7 @@ export default function App() {
   const hasExecutedEscappValidation = useRef(false);
 
   const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [result, setResult] = useState({ success: undefined, message: undefined });
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export default function App() {
           Utils.log("ESCAPP validation", success, erState);
           if (success) {
             restoreAppState(erState);
-            setLoading(false);
+            setInitialLoading(false);
           }
         } catch (e) {
           Utils.log("Error in validate callback", e);
@@ -168,8 +169,8 @@ export default function App() {
         }
         : {})}
     >
-      <div className={`main-background ${result && result.success === true ? "solved" : ""}`}>
-        {!loading && <MainScreen config={appSettings} sendSolution={checkResult} result={result} />}
+      <div className={`main-background ${result && result.success === true ? "solved" : ""}`} style={{ opacity: loading ? 0 : 1 }}>
+        {!initialLoading && <MainScreen setLoading={setLoading} config={appSettings} sendSolution={checkResult} result={result} />}
       </div>
     </div>
   );

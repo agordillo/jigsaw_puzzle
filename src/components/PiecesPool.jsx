@@ -10,6 +10,7 @@ export default function PiecesPool({
     onDragStart,
     onPieceClick,
     onPieceHover,
+    slicedImages,
     I18n,
     isLocked,
 }) {
@@ -36,6 +37,14 @@ export default function PiecesPool({
                         onPieceClick={onPieceClick}
                         onMouseEnter={() => onPieceHover && onPieceHover(piece.id)}
                         isLocked={isLocked}
+                        tileUrl={
+                            slicedImages
+                                ? (piece.currentSide === 1
+                                    ? (slicedImages.side1 ? slicedImages.side1[piece.correctPosition] : null)
+                                    : (slicedImages.side2 ? slicedImages.side2[piece.correctPosition] : null)
+                                )
+                                : null
+                        }
                         style={{
                             position: "absolute",
                             left: `${(piece.poolX !== undefined ? piece.poolX : Math.random() * 0.55) * 100}%`,

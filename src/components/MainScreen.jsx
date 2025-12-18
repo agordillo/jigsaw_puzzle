@@ -6,14 +6,67 @@ import PiecesPool from "./PiecesPool";
 import PuzzleBoard from "./PuzzleBoard";
 import useSound from "../hooks/useSound";
 
-export default function MainScreen({ config, sendSolution, result }) {
+export default function MainScreen({ config, sendSolution, result, setLoading }) {
   const { I18n } = useContext(GlobalContext);
   const [pieces, setPieces] = useState([]);
   const [gridState, setGridState] = useState([]);
   const [rows, setRows] = useState(3);
   const [cols, setCols] = useState(3);
+  const [slicedImages, setSlicedImages] = useState({ side1: [], side2: [] });
   const maxZIndex = useRef(100);
   const winSound = useSound(config.winAudio);
+
+  //the images are cut to make it difficult to see the image so easily
+  const sliceImage = (src, r, c) => {
+    return new Promise((resolve) => {
+      if (!src) {
+        resolve([]);
+        return;
+      }
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.src = src;
+      img.onload = () => {
+        const pieceWidth = img.width / c;
+        const pieceHeight = img.height / r;
+        const pieces = [];
+
+        try {
+          for (let row = 0; row < r; row++) {
+            for (let col = 0; col < c; col++) {
+              const canvas = document.createElement("canvas");
+              canvas.width = pieceWidth;
+              canvas.height = pieceHeight;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(
+                img,
+                col * pieceWidth,
+                row * pieceHeight,
+                pieceWidth,
+                pieceHeight,
+                0,
+                0,
+                pieceWidth,
+                pieceHeight
+              );
+              pieces.push(canvas.toDataURL());
+            }
+          }
+        } catch (e) {
+          // If CORS fails, we might return empty array or handle fallback.
+
+          console.error("Error slicing image (likely CORS):", src, e);
+          resolve([]);
+          return;
+        }
+        resolve(pieces);
+      };
+      img.onerror = (err) => {
+        console.error("Error loading image for slicing:", src, err);
+        resolve([]);
+      };
+    });
+  };
 
   useEffect(() => {
     if (!config) return;
@@ -21,7 +74,15 @@ export default function MainScreen({ config, sendSolution, result }) {
     const c = config.cols || 3;
     setRows(r);
     setCols(c);
-    initializePuzzle(r, c);
+
+    // Slice images
+    Promise.all([
+      sliceImage(config.image1, r, c),
+      sliceImage(config.image2, r, c)
+    ]).then(([side1, side2]) => {
+      setSlicedImages({ side1, side2 });
+      initializePuzzle(r, c);
+    });
 
   }, [config]);
 
@@ -106,6 +167,7 @@ export default function MainScreen({ config, sendSolution, result }) {
 
     setPieces(newPieces);
     setGridState(Array(totalPieces).fill(null));
+    setLoading(false)
   };
 
   const isLocked = result && result.success === true;
@@ -232,6 +294,7 @@ export default function MainScreen({ config, sendSolution, result }) {
         onDragStart={handleDragStart}
         onPieceClick={togglePieceSide}
         onPieceHover={handlePieceHover}
+        slicedImages={slicedImages}
         I18n={I18n}
         isLocked={isLocked}
       />
@@ -246,6 +309,7 @@ export default function MainScreen({ config, sendSolution, result }) {
           onDrop={handleDrop}
           onDragStart={handleDragStart}
           onPieceClick={togglePieceSide}
+          slicedImages={slicedImages}
           I18n={I18n}
           isLocked={isLocked}
         />

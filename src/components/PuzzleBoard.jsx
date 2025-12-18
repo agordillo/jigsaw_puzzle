@@ -11,6 +11,7 @@ export default function PuzzleBoard({
     onDrop,
     onDragStart,
     onPieceClick,
+    slicedImages,
     I18n,
     isLocked,
 }) {
@@ -93,6 +94,14 @@ export default function PuzzleBoard({
                                         onDragStart={onDragStart}
                                         onPieceClick={onPieceClick}
                                         isLocked={isLocked}
+                                        tileUrl={
+                                            slicedImages
+                                                ? (piece.currentSide === 1
+                                                    ? (slicedImages.side1 ? slicedImages.side1[piece.correctPosition] : null)
+                                                    : (slicedImages.side2 ? slicedImages.side2[piece.correctPosition] : null)
+                                                )
+                                                : null
+                                        }
                                     />
                                 )}
                             </div>
